@@ -12,7 +12,10 @@
 require 'spec_helper'
 
 describe User do
-  before { @user = User.new( name: "Morteza", email: "morteza@heydari.com", password: "foo", password_confirmation: "foo") }
+  before do
+    @user = User.new(name: "Example User", email: "user@example.com",
+                     password: "foobar", password_confirmation: "foobar")
+  end
 
   subject { @user }
 
@@ -21,6 +24,8 @@ describe User do
   it { should respond_to(:password_digest) }
   it { should respond_to(:password) }
   it { should respond_to(:password_confirmation) }
+
+  it { should respond_to(:authenticate) }
 
   describe "name is not present" do
     before {  @user.name = " " }
@@ -79,6 +84,11 @@ describe User do
   describe "when password confirmation is nil" do
     before { @user.password_confirmation = nil }
     it { should_not be_valid }
+  end
+
+  describe "with a password that's too short" do
+    before { @user.password = @user.password_confirmation = "a" * 7 }
+    it { should be_invalid }
   end
 
   describe "return value of authenticate method" do
